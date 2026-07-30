@@ -1,0 +1,76 @@
+
+
+
+
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Django secret files
+*.pem
+*.key
+
+# PostgreSQL
+postgres_data/
+*.sql
+*.dump
+
+# Docker
+.dockerignore
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Jupyter / Anaconda
+.ipynb_checkpoints/
+*.ipynb
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# Node (if you have React/React Native frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Expo (React Native)
+.expo/
+.expo-shared/
+
+# Temporary files
+*.tmp
+*.bak
