@@ -80,7 +80,6 @@ class MenopauseEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="menopause_entries")
     date = models.DateField()
     exercise = models.BooleanField(default=False)
-    vitamins = models.BooleanField(default=False)
     symptoms = models.JSONField(default=list, blank=True)
     notes = models.TextField(blank=True)
 

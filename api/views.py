@@ -3,6 +3,7 @@
 from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import (
     Profile, MenstruationEntry, PregnancyEntry,
     MenopauseEntry, Doctor, MoodEntry, MythAnswer,
@@ -12,7 +13,7 @@ from .serializers import (
     RegisterSerializer, ProfileSerializer, MenstruationEntrySerializer,
     PregnancyEntrySerializer, MenopauseEntrySerializer, DoctorSerializer,
     MoodEntrySerializer, MythAnswerSerializer, ChatSummarySerializer,
-    MedicalInfoSerializer,
+    MedicalInfoSerializer, EmailTokenObtainPairSerializer,
 )
 
 
@@ -20,6 +21,10 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class EmailTokenObtainPairView(TokenObtainPairView):
+    serializer_class = EmailTokenObtainPairSerializer
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):

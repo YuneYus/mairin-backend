@@ -2,6 +2,7 @@
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import (
     Profile, MenstruationEntry, PregnancyEntry, Appointment,
     MenopauseEntry, Supplement, Doctor, MoodEntry, MythAnswer,
@@ -9,20 +10,34 @@ from .models import (
 )
 
 
+class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = User.EMAIL_FIELD
+
+
 class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
+    name = serializers.CharField(source="first_name", required=True)
+    last_name = serializers.CharField(required=True)
+    birth_date = serializers.DateField(source="profile.birth_date", required=False, allow_null=True)
 
     class Meta:
         model = User
-        fields = ["username", "email", "password"]
+        fields = ["email", "password", "name", "last_name", "birth_date"]
 
     def create(self, validated_data):
+        profile_data = validated_data.pop("profile", {})
+        first_name = validated_data["first_name"]
+        last_name = validated_data["last_name"]
+        email = validated_data["email"]
         user = User.objects.create_user(
-            username=validated_data["username"],
-            email=validated_data.get("email", ""),
+            username=email,
+            email=email,
             password=validated_data["password"],
+            first_name=first_name,
+            last_name=last_name,
         )
-        Profile.objects.create(user=user)
+        Profile.objects.create(user=user, first_name=first_name, last_name=last_name, **profile_data)
         return user
 
 
