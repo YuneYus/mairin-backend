@@ -68,6 +68,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+AUTHENTICATION_BACKENDS = [
+    "api.backends.EmailBackend",
+]
+
 LANGUAGE_CODE = "es"
 TIME_ZONE = "America/Managua"
 USE_I18N = True
