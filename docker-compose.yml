@@ -1,0 +1,35 @@
+
+
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: mairin
+      POSTGRES_USER: mairin_user
+      POSTGRES_PASSWORD: mairin_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_NAME: mairin
+      DB_USER: mairin_user
+      DB_PASSWORD: mairin_pass
+      DB_HOST: db
+      DB_PORT: 5432
+
+volumes:
+  postgres_data:
