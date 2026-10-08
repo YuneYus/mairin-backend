@@ -5,8 +5,7 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "preDeployCommand": ["python manage.py migrate --noinput"],
-    "startCommand": "gunicorn mairin.wsgi --log-file -",
+    "startCommand": "/bin/sh -c \"python manage.py migrate --noinput && gunicorn mairin.wsgi --log-file -\"",
     "restartPolicyType": "ON_FAILURE"
   }
 }

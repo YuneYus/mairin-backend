@@ -394,7 +394,7 @@ http://127.0.0.1:8000
 
 # ☁️ Deploy en Railway
 
-El repositorio ya incluye `railway.json`: Railway construye con el `Dockerfile`, aplica las migraciones antes de cada deploy y arranca con `gunicorn`.
+El repositorio ya incluye `railway.json`: Railway construye con el `Dockerfile` y, en cada arranque, aplica las migraciones (`migrate`) y luego inicia `gunicorn`.
 
 1. En Railway: **New Project → Deploy from GitHub repo** → elegir `mairin-backend`.
 2. En el mismo proyecto: **New → Database → PostgreSQL**.
