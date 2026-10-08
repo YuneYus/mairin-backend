@@ -67,9 +67,8 @@ class PregnancyEntrySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         appointments_data = validated_data.pop("appointments", [])
-        entry = PregnancyEntry.objects.create(
-            user=self.context["request"].user, **validated_data
-        )
+        validated_data.setdefault("user", self.context["request"].user)
+        entry = PregnancyEntry.objects.create(**validated_data)
         for appt in appointments_data:
             Appointment.objects.create(pregnancy_entry=entry, **appt)
         return entry
@@ -90,9 +89,8 @@ class MenopauseEntrySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         supplements_data = validated_data.pop("supplements", [])
-        entry = MenopauseEntry.objects.create(
-            user=self.context["request"].user, **validated_data
-        )
+        validated_data.setdefault("user", self.context["request"].user)
+        entry = MenopauseEntry.objects.create(**validated_data)
         for sup in supplements_data:
             Supplement.objects.create(menopause_entry=entry, **sup)
         return entry

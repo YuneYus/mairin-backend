@@ -22,9 +22,7 @@ media/
 staticfiles/
 
 # Environment variables
-.env
-.env.*
-!.env.example
+# .env se versiona a propósito (valores de desarrollo). Los valores reales van en Railway.
 
 # Django secret files
 *.pem

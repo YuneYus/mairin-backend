@@ -1,13 +1,23 @@
 from pathlib import Path
 import os
 
+from decouple import Csv, config
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "eKdfQp1LuWUzchPRKMKhFNQ2c4lZLSiDB2cjwi3S55M="
+# Los valores se leen de las variables de entorno y, si no existen, del archivo .env.
+# En local se usa el .env del repo; en Railway se definen las variables reales en el panel.
+SECRET_KEY = config("SECRET_KEY", default="eKdfQp1LuWUzchPRKMKhFNQ2c4lZLSiDB2cjwi3S55M=")
 
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["*"]  # tighten this before deploying to production
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=Csv())
+
+# Necesario para usar el panel /admin por HTTPS (ej. https://tu-app.up.railway.app)
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
+
+# Railway termina el HTTPS en su proxy y reenvía la petición por HTTP.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -54,12 +64,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "mairin.wsgi.application"
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+
+# Sin DATABASE_URL se usa SQLite local. En Railway, DATABASE_URL apunta a su Postgres.
+DATABASE_URL = config("DATABASE_URL", default="")
+
+if DATABASE_URL:
+    import dj_database_url
+
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -78,6 +97,14 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Con DEBUG=True Django sirve los estáticos solo; en producción lo hace WhiteNoise.
+if not DEBUG:
+    MIDDLEWARE.insert(
+        MIDDLEWARE.index("django.middleware.security.SecurityMiddleware") + 1,
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+    )
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

@@ -54,9 +54,9 @@ git clone <URL_DEL_REPOSITORIO>
 cd mairin-backend
 ```
 
-## 2. Crear las variables de entorno
+## 2. Variables de entorno
 
-Configura las variables necesarias para Django y PostgreSQL según el archivo de configuración del proyecto.
+No hace falta configurar nada: el archivo `.env` del repositorio ya trae los valores de desarrollo (SQLite local, `DEBUG=True`).
 
 ---
 
@@ -389,6 +389,29 @@ El backend estará disponible en:
 ```text
 http://127.0.0.1:8000
 ```
+
+---
+
+# ☁️ Deploy en Railway
+
+El repositorio ya incluye `railway.json`: Railway construye con el `Dockerfile`, aplica las migraciones antes de cada deploy y arranca con `gunicorn`.
+
+1. En Railway: **New Project → Deploy from GitHub repo** → elegir `mairin-backend`.
+2. En el mismo proyecto: **New → Database → PostgreSQL**.
+3. En el servicio del backend → **Variables**, agregar:
+
+| Variable | Valor |
+| --- | --- |
+| `SECRET_KEY` | Una clave larga y nueva (no la del `.env`) |
+| `DEBUG` | `False` |
+| `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` |
+| `ALLOWED_HOSTS` | El dominio de Railway, ej. `tu-app.up.railway.app` |
+| `CSRF_TRUSTED_ORIGINS` | `https://tu-app.up.railway.app` |
+
+4. En **Settings → Networking → Generate Domain** para obtener la URL pública.
+5. Crear el superusuario desde la terminal del servicio en Railway: `python manage.py createsuperuser`.
+
+Las variables de Railway tienen prioridad sobre el `.env`, así que el `.env` del repo no afecta a producción.
 
 ---
 
