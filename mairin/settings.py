@@ -95,6 +95,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(config("MEDIA_ROOT", default=str(BASE_DIR / "media")))
 
 # Con DEBUG=True Django sirve los estáticos solo; en producción lo hace WhiteNoise.
 if not DEBUG:

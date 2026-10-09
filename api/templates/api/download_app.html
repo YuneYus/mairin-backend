@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7b8cb">
+    <title>Descarga Mairin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'api/download_app.css' %}">
+</head>
+<body>
+    <div class="accent-face" aria-hidden="true">
+        <span class="face-eye"></span>
+        <span class="face-eye"></span>
+        <span class="face-smile"></span>
+    </div>
+    <header class="site-header">
+        <a class="wordmark" href="{% url 'download-app' %}" aria-label="Mairin, inicio">mairin<span>.</span></a>
+        <span class="header-label">SALUD Y BIENESTAR</span>
+    </header>
+
+    <main class="download-layout">
+        <section class="intro" aria-labelledby="page-title">
+            <p class="eyebrow">TU COMPAÑERA, EN CADA ETAPA</p>
+            <h1 id="page-title">Descarga <span>Mairin</span></h1>
+            <p class="intro-copy">Un espacio para acompañarte y cuidar de tu bienestar, a tu manera y a tu ritmo.</p>
+            <div class="title-rule" aria-hidden="true"></div>
+        </section>
+
+        <section class="release-panel" aria-labelledby="release-title">
+            <p class="eyebrow">APLICACIÓN PARA ANDROID</p>
+            <h2 id="release-title">Lleva Mairin contigo</h2>
+            {% if release %}
+                <p class="release-copy">La versión más reciente ya está lista.</p>
+                <dl class="release-details">
+                    <div>
+                        <dt>Versión</dt>
+                        <dd>{{ release.version }}</dd>
+                    </div>
+                    <div>
+                        <dt>Publicada</dt>
+                        <dd>{{ release.uploaded_at|date:"j M Y" }}</dd>
+                    </div>
+                </dl>
+                {% if release.release_notes %}
+                    <p class="release-notes">{{ release.release_notes|linebreaksbr }}</p>
+                {% endif %}
+                <a class="download-button" href="{% url 'download-latest-app' %}">Descargar APK <span aria-hidden="true">↓</span></a>
+                <p class="download-note">Archivo de instalación para Android</p>
+            {% else %}
+                <p class="release-copy">Estamos preparando la próxima versión. Vuelve pronto para descargarla.</p>
+                <span class="coming-soon">PRÓXIMAMENTE</span>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span>MAIRIN</span>
+        <span>Hecha para acompañarte.</span>
+    </footer>
+</body>
+</html>

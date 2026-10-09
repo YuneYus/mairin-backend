@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
 
 
 class Profile(models.Model):
@@ -168,3 +169,21 @@ class Cirugia(models.Model):
     medical_info = models.ForeignKey(MedicalInfo, on_delete=models.CASCADE, related_name="cirugias")
     reason = models.CharField(max_length=200, blank=True)
     date = models.CharField(max_length=20, blank=True)
+
+
+class AppRelease(models.Model):
+    version = models.CharField(max_length=40)
+    apk = models.FileField(
+        upload_to="app-releases/",
+        validators=[FileExtensionValidator(["apk"])],
+    )
+    release_notes = models.TextField(blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-uploaded_at", "-pk")
+        verbose_name = "app release"
+        verbose_name_plural = "app releases"
+
+    def __str__(self):
+        return f"Mairin {self.version}"

@@ -1,3 +1,7 @@
+from pathlib import Path
+
+from django.http import FileResponse, Http404
+from django.shortcuts import render
 from rest_framework import viewsets, generics, permissions
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -12,6 +16,7 @@ from .models import (
     MythAnswer,
     ChatSummary,
     MedicalInfo,
+    AppRelease,
 )
 
 from .serializers import (
@@ -106,3 +111,19 @@ class MedicalInfoView(generics.RetrieveUpdateAPIView):
             user=self.request.user
         )
         return info
+
+
+def download_app_page(request):
+    return render(request, "api/download_app.html", {"release": AppRelease.objects.first()})
+
+
+def download_latest_app(request):
+    release = AppRelease.objects.first()
+    if release is None:
+        raise Http404("No app release is available.")
+    return FileResponse(
+        release.apk.open("rb"),
+        as_attachment=True,
+        filename=Path(release.apk.name).name,
+        content_type="application/vnd.android.package-archive",
+    )
