@@ -444,3 +444,20 @@ Proyecto desarrollado como parte de **MAIRIN**, una aplicación enfocada en el b
 ## 📄 Licencia
 
 Proyecto académico y de desarrollo.
+
+## Despliegue en Azure
+
+- **Servidor:** máquina virtual Ubuntu 24.04 en Azure (`MAIRIN`), IP pública `68.211.89.151`.
+- **Puertos abiertos (NSG):** 22 (SSH) y 80 (HTTP). La base de datos no está expuesta a internet.
+- **Stack:** Python 3.12, Django 5.1, Django REST Framework, SimpleJWT, SQLite, nginx.
+- **Código:** `/home/mairin/mairin-backend/mairin-backend`, con entorno virtual en `.venv`.
+- **Servicio:** `mairin.service` (systemd) ejecuta Django en `127.0.0.1:8000`; nginx hace de proxy en el puerto 80 y sirve `/static/` y `/downloads/`.
+- **Variables (`.env`, no se sube a GitHub):** `SECRET_KEY`, `ALLOWED_HOSTS=68.211.89.151,127.0.0.1,localhost`, `CSRF_TRUSTED_ORIGINS=http://68.211.89.151`.
+- **Comandos útiles en el servidor:**
+```bash
+  sudo systemctl status mairin nginx
+  sudo systemctl restart mairin
+  python manage.py migrate
+  python manage.py collectstatic --noinput
+```
+- **APK:** se compila con `eas build -p android --profile azure` (la app usa `EXPO_PUBLIC_API_URL=http://68.211.89.151`) y se publica en `http://68.211.89.151/downloads/mairin.apk`.
