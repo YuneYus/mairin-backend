@@ -1,17 +1,14 @@
 from pathlib import Path
-import os
 
 from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Los valores se leen de las variables de entorno y, si no existen, del archivo .env.
-# En local se usa el .env del repo; en Railway se definen las variables reales en el panel.
-SECRET_KEY = config("SECRET_KEY", default="eKdfQp1LuWUzchPRKMKhFNQ2c4lZLSiDB2cjwi3S55M=")
+SECRET_KEY = config("SECRET_KEY")
 
-DEBUG = config("DEBUG", default=True, cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=Csv())
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
 # Necesario para usar el panel /admin por HTTPS (ej. https://tu-app.up.railway.app)
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
