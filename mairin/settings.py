@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import Csv, config
@@ -115,4 +116,13 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ),
     "EXCEPTION_HANDLER": "api.exceptions.exception_handler",
+}
+
+# Duración de las sesiones de la app. Por defecto Django REST simplejwt da 5 minutos y 1 día:
+# la app dejaba de sincronizar si no se abría en un día. Con rotación, cada renovación
+# entrega un token nuevo, así que la sesión solo vence tras 90 días sin abrir la app.
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
+    "ROTATE_REFRESH_TOKENS": True,
 }

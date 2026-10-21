@@ -174,3 +174,15 @@ class ErrorFormatTests(TestCase):
         response = exception_handler(IntegrityError("duplicate key"), {})
         self.assertEqual(response.status_code, 409)
         self.assertEqual(response.data["error"], "conflict")
+
+
+class SessionLifetimeTests(TestCase):
+    def test_refresh_rotates_and_lasts_long(self):
+        from rest_framework_simplejwt.tokens import RefreshToken
+
+        user = User.objects.create_user("ana@test.com", "ana@test.com", "Clave-Segura-123")
+        refresh = RefreshToken.for_user(user)
+        self.assertGreaterEqual(refresh.lifetime, timedelta(days=90))
+        response = APIClient().post("/api/token/refresh/", {"refresh": str(refresh)}, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("refresh", response.json())  # rotación: la app guarda el nuevo
