@@ -7,30 +7,28 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import (
-    Profile,
-    MenstruationEntry,
-    PregnancyEntry,
-    MenopauseEntry,
-    Doctor,
-    MoodEntry,
-    MythAnswer,
-    ChatSummary,
-    MedicalInfo,
     AppRelease,
+    ChatSummary,
+    DailyLog,
+    Doctor,
+    MedicalInfo,
+    MythAnswer,
+    Profile,
+    Reminder,
+    Symptom,
 )
 
 from .serializers import (
-    RegisterSerializer,
-    ProfileSerializer,
-    MenstruationEntrySerializer,
-    PregnancyEntrySerializer,
-    MenopauseEntrySerializer,
-    DoctorSerializer,
-    MoodEntrySerializer,
-    MythAnswerSerializer,
     ChatSummarySerializer,
-    MedicalInfoSerializer,
+    DailyLogSerializer,
+    DoctorSerializer,
     EmailTokenObtainPairSerializer,
+    MedicalInfoSerializer,
+    MythAnswerSerializer,
+    ProfileSerializer,
+    RegisterSerializer,
+    ReminderSerializer,
+    SymptomSerializer,
 )
 
 
@@ -67,29 +65,28 @@ class UserScopedViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class MenstruationEntryViewSet(UserScopedViewSet):
-    queryset = MenstruationEntry.objects.all()
-    serializer_class = MenstruationEntrySerializer
+class DailyLogViewSet(UserScopedViewSet):
+    queryset = DailyLog.objects.prefetch_related("symptoms__symptom")
+    serializer_class = DailyLogSerializer
 
 
-class PregnancyEntryViewSet(UserScopedViewSet):
-    queryset = PregnancyEntry.objects.all()
-    serializer_class = PregnancyEntrySerializer
+class ReminderViewSet(UserScopedViewSet):
+    queryset = Reminder.objects.all()
+    serializer_class = ReminderSerializer
 
 
-class MenopauseEntryViewSet(UserScopedViewSet):
-    queryset = MenopauseEntry.objects.all()
-    serializer_class = MenopauseEntrySerializer
+class SymptomViewSet(viewsets.ReadOnlyModelViewSet):
+    """Catálogo de síntomas (igual para todas las usuarias)."""
+
+    queryset = Symptom.objects.all()
+    serializer_class = SymptomSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "code"
 
 
 class DoctorViewSet(UserScopedViewSet):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
-
-
-class MoodEntryViewSet(UserScopedViewSet):
-    queryset = MoodEntry.objects.all()
-    serializer_class = MoodEntrySerializer
 
 
 class MythAnswerViewSet(UserScopedViewSet):
@@ -107,7 +104,7 @@ class MedicalInfoView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        info, _ = MedicalInfo.objects.get_or_create(
+        info, _ = MedicalInfo.objects.prefetch_related("surgeries", "usual_symptoms__symptom").get_or_create(
             user=self.request.user
         )
         return info

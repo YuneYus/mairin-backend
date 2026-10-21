@@ -198,49 +198,42 @@ GET /profile/
 ## 🩺 Información médica
 
 ```text
-GET /medical-info/
-POST /medical-info/
+GET   /medical-info/
+PUT   /medical-info/
+PATCH /medical-info/
 ```
+
+Historial médico con sus cirugías (`surgeries`) y síntomas habituales (`usual_symptoms`). Las listas se reemplazan completas cuando se envían.
 
 ---
 
-## 🩸 Ciclo menstrual
+## 📅 Registro diario
 
 ```text
-/api/menstruation/
+/api/daily-logs/
 ```
 
-Permite registrar información relacionada con el ciclo menstrual, síntomas y otros datos.
+Un registro por usuaria y día, para cualquier etapa (menstruación, embarazo o menopausia): estado de ánimo, ejercicio, notas, síntomas y los datos propios de cada etapa.
 
 ---
 
-## 🤰 Embarazo
+## 🩹 Síntomas
 
 ```text
-/api/pregnancy/
+GET /api/symptoms/
 ```
 
-Permite gestionar información relacionada con el seguimiento del embarazo.
+Catálogo fijo de síntomas. Cada síntoma de un registro es un `code` del catálogo o un `custom_label` escrito por la usuaria.
 
 ---
 
-## 🌸 Menopausia
+## ⏰ Recordatorios
 
 ```text
-/api/menopause/
+/api/reminders/
 ```
 
-Permite registrar información relacionada con síntomas y seguimiento durante la menopausia.
-
----
-
-## 😊 Estado de ánimo
-
-```text
-/api/moods/
-```
-
-Permite registrar el estado de ánimo de la usuaria.
+Citas médicas (`appointment`) y suplementos (`supplement`) con su aviso.
 
 ---
 
@@ -261,6 +254,10 @@ Permite gestionar información de profesionales de salud.
 ```
 
 Permite almacenar o consultar información relacionada con las conversaciones y resúmenes del chat.
+
+---
+
+El modelo de datos completo (tablas, relaciones y reglas) está en [`docs/modelo-de-datos.md`](docs/modelo-de-datos.md).
 
 ---
 
@@ -316,11 +313,10 @@ La computadora que ejecuta el frontend y la que ejecuta el backend deben estar c
 | Información médica | `/medical-info/`       |
 | Obtener token      | `/api/token/`          |
 | Renovar token      | `/api/token/refresh/`  |
-| Menstruación       | `/api/menstruation/`   |
-| Embarazo           | `/api/pregnancy/`      |
-| Menopausia         | `/api/menopause/`      |
+| Registro diario    | `/api/daily-logs/`     |
+| Síntomas           | `/api/symptoms/`       |
+| Recordatorios      | `/api/reminders/`      |
 | Doctores           | `/api/doctors/`        |
-| Estado de ánimo    | `/api/moods/`          |
 | Mitos              | `/api/myths/`          |
 | Chat               | `/api/chat-summaries/` |
 | Administración     | `/admin/`              |
