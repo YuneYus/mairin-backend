@@ -89,6 +89,15 @@ class ListFilterTests(TestCase):
         names = [r["name"] for r in self.client.get("/api/reminders/?to=2026-10-21").json()]
         self.assertEqual(names, ["2026-10-20T08:00:00-06:00"])
 
+    def test_reminder_keeps_the_calendar_day_it_was_logged_on(self):
+        response = self.client.post(
+            "/api/reminders/",
+            {"kind": "appointment", "name": "Control", "scheduled_at": "2026-11-05T09:00:00-06:00", "log_date": "2026-10-20"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201, response.content)
+        self.assertEqual(response.json()["log_date"], "2026-10-20")
+
 
 class ClientIdTests(TestCase):
     def setUp(self):

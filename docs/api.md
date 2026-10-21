@@ -81,9 +81,13 @@ POST /api/reminders/
   "kind": "supplement",
   "name": "Calcio",
   "scheduled_at": "2026-10-21T08:00:00-06:00",
-  "reminder_offset": "1hour"
+  "reminder_offset": "1hour",
+  "log_date": "2026-10-20"
 }
 ```
+
+- `log_date` (opcional): día del calendario en el que se anotó; la app lo usa para mostrar el
+  recordatorio en ese día aunque `scheduled_at` sea otro.
 
 - `kind`: `appointment` | `supplement`
 - `reminder_offset`: `5min` | `10min` | `1hour` | `2hours` | `1day` | `2days` | `1week` | `none`

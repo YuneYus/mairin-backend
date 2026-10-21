@@ -74,6 +74,7 @@ erDiagram
         datetime scheduled_at
         text description
         string reminder_offset "5min ... 1week | none"
+        date log_date "día del calendario donde se anotó"
         datetime created_at
         datetime updated_at
     }

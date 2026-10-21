@@ -238,6 +238,8 @@ class Reminder(models.Model):
     scheduled_at = models.DateTimeField(null=True, blank=True)
     description = models.TextField(blank=True)
     reminder_offset = models.CharField(max_length=10, choices=OFFSET_CHOICES, default="none")
+    # Día del calendario en el que la usuaria anotó el recordatorio (puede ser distinto de scheduled_at).
+    log_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
