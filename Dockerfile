@@ -18,4 +18,6 @@ RUN SECRET_KEY=solo-para-el-build python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Producción (Railway): aplica las migraciones y arranca gunicorn en el puerto que asigne la plataforma.
+# En local, docker compose reemplaza este comando por runserver.
+CMD sh -c "python manage.py migrate --noinput && gunicorn mairin.wsgi --bind 0.0.0.0:${PORT:-8000} --log-file -"
