@@ -29,3 +29,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Rutas de la API inexistentes o errores del servidor responden JSON (solo con DEBUG=False).
+handler404 = "api.exceptions.handler404"
+handler500 = "api.exceptions.handler500"

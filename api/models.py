@@ -31,6 +31,7 @@ class Profile(models.Model):
 
     app_language = models.CharField(max_length=10, choices=APP_LANGUAGE_CHOICES, default="es")
     audio_language = models.CharField(max_length=10, choices=AUDIO_LANGUAGE_CHOICES, default="es")
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Profile({self.user.username})"
@@ -38,12 +39,21 @@ class Profile(models.Model):
 
 class Doctor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="doctors")
+    # Id que genera la app; si un POST se reintenta con el mismo client_id no se duplica.
+    client_id = models.UUIDField(null=True, blank=True)
     name = models.CharField(max_length=200)
     professionalism = models.CharField(max_length=200, blank=True)
     phonenumber = models.CharField(max_length=30, blank=True)
     details = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "client_id"], condition=Q(client_id__isnull=False), name="doctor_unique_client_id"
+            ),
+        ]
 
     def __str__(self):
         return self.name
@@ -54,6 +64,7 @@ class MythAnswer(models.Model):
     date = models.DateField()
     flashcard_id = models.PositiveIntegerField(null=True, blank=True)
     answered_true = models.BooleanField()
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("user", "date")
@@ -221,6 +232,7 @@ class Reminder(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reminders")
+    client_id = models.UUIDField(null=True, blank=True)
     kind = models.CharField(max_length=20, choices=KIND_CHOICES)
     name = models.CharField(max_length=200, blank=True)
     scheduled_at = models.DateTimeField(null=True, blank=True)
@@ -231,6 +243,11 @@ class Reminder(models.Model):
 
     class Meta:
         ordering = ("scheduled_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "client_id"], condition=Q(client_id__isnull=False), name="reminder_unique_client_id"
+            ),
+        ]
 
     def __str__(self):
         return f"{self.get_kind_display()}: {self.name}"

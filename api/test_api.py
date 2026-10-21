@@ -79,7 +79,7 @@ class HealthDataApiTests(TestCase):
         self.assertEqual(len(body["symptoms"]), 2)  # el "nausea" repetido se guarda una sola vez
 
         # Actualizar sin `symptoms` conserva los síntomas; con `symptoms` los reemplaza.
-        url = f"/api/daily-logs/{body['id']}/"
+        url = f"/api/daily-logs/{body['date']}/"
         self.client.patch(url, {"notes": "todo bien"}, format="json")
         self.assertEqual(DailyLogSymptom.objects.count(), 2)
         self.client.patch(url, {"symptoms": [{"code": "headache"}]}, format="json")
@@ -87,10 +87,11 @@ class HealthDataApiTests(TestCase):
             list(DailyLogSymptom.objects.values_list("symptom__code", flat=True)), ["headache"]
         )
 
-    def test_daily_log_validation_errors_are_400(self):
+    def test_daily_log_validation_errors(self):
         self.client.post("/api/daily-logs/", {"date": "2026-10-20", "stage": "menstruacion"}, format="json")
         duplicate = self.client.post("/api/daily-logs/", {"date": "2026-10-20", "stage": "menstruacion"}, format="json")
-        self.assertEqual(duplicate.status_code, 400)
+        self.assertEqual(duplicate.status_code, 409)
+        self.assertEqual(duplicate.json()["error"], "already_exists")
         both = self.client.post(
             "/api/daily-logs/",
             {"date": "2026-10-21", "stage": "menstruacion", "symptoms": [{"code": "cramps", "custom_label": "x"}]},
@@ -133,7 +134,8 @@ class HealthDataApiTests(TestCase):
 
         bad = self.client.patch("/medical-info/", {"menstrual_pain_level": 7, "blood_type": "Z"}, format="json")
         self.assertEqual(bad.status_code, 400)
-        self.assertEqual(set(bad.json()), {"menstrual_pain_level", "blood_type"})
+        self.assertEqual(bad.json()["error"], "validation_error")
+        self.assertEqual(set(bad.json()["fields"]), {"menstrual_pain_level", "blood_type"})
 
     def test_reminders_myths_and_chat_summaries(self):
         reminder = self.client.post(
@@ -144,7 +146,7 @@ class HealthDataApiTests(TestCase):
         self.assertEqual(reminder.status_code, 201, reminder.content)
         myth = {"date": "2026-10-20", "flashcard_id": 4, "answered_true": False}
         self.assertEqual(self.client.post("/api/myths/", myth, format="json").status_code, 201)
-        self.assertEqual(self.client.post("/api/myths/", myth, format="json").status_code, 400)
+        self.assertEqual(self.client.post("/api/myths/", myth, format="json").status_code, 409)
         summary = {"date": "2026-10-20", "text": "Hoy me sentí bien"}
         self.assertEqual(self.client.post("/api/chat-summaries/", summary, format="json").status_code, 201)
 

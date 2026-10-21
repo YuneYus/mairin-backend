@@ -3,6 +3,8 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from .exceptions import Conflict
+
 from .models import (
     ChatSummary,
     DailyLog,
@@ -73,7 +75,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UniquePerUserDateMixin:
-    """Devuelve 400 (no 500) si ya existe un registro de la usuaria para esa fecha."""
+    """Devuelve 409 (no 500) si ya existe un registro de la usuaria para esa fecha."""
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
@@ -84,7 +86,8 @@ class UniquePerUserDateMixin:
             if self.instance is not None:
                 existing = existing.exclude(pk=self.instance.pk)
             if existing.exists():
-                raise serializers.ValidationError({"date": "Ya existe un registro para esta fecha."})
+                # 409: la app puede usar PUT /<recurso>/<fecha>/ para actualizarlo.
+                raise Conflict("Ya existe un registro para esta fecha.")
         return attrs
 
 

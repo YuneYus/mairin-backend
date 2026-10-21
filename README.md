@@ -257,7 +257,7 @@ Permite almacenar o consultar información relacionada con las conversaciones y 
 
 ---
 
-El modelo de datos completo (tablas, relaciones y reglas) está en [`docs/modelo-de-datos.md`](docs/modelo-de-datos.md).
+La referencia completa de la API (rutas, filtros, sincronización y formato de errores) está en [`docs/api.md`](docs/api.md), y el modelo de datos en [`docs/modelo-de-datos.md`](docs/modelo-de-datos.md).
 
 ---
 
